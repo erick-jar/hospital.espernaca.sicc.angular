@@ -1,0 +1,124 @@
+<header class="topbar">
+  <section class="topbar-start" aria-label="Navegação e busca">
+    <button
+      type="button"
+      class="menu-button"
+      aria-label="Abrir menu principal"
+      (click)="solicitarAberturaMenu()"
+    >
+      <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
+
+    <form
+      class="search-form"
+      role="search"
+      (ngSubmit)="buscar()"
+    >
+      <label for="busca-global" class="visually-hidden">
+        Buscar no sistema
+      </label>
+
+      <i class="bi bi-search search-icon" aria-hidden="true"></i>
+
+      <input
+        id="busca-global"
+        name="busca"
+        type="search"
+        class="search-input"
+        placeholder="Buscar no sistema..."
+        autocomplete="off"
+        [(ngModel)]="termoBusca"
+      />
+    </form>
+  </section>
+
+  <section class="topbar-actions" aria-label="Ações do usuário">
+    <button
+      type="button"
+      class="notification-button"
+      aria-label="Abrir notificações"
+    >
+      <i class="bi bi-bell" aria-hidden="true"></i>
+
+      @if (notificacoes > 0) {
+        <span class="notification-badge">
+          {{ notificacoes }}
+        </span>
+      }
+    </button>
+
+    @if (obterUsuario(); as usuario) {
+      <section class="profile-wrapper">
+        <article
+          class="profile-card"
+          aria-label="Usuário conectado"
+        >
+          <span class="profile-avatar" aria-hidden="true">
+            {{ usuario.iniciais }}
+          </span>
+
+          <span class="profile-info">
+            <strong>{{ usuario.nome }}</strong>
+            <small>{{ usuario.perfil }}</small>
+          </span>
+
+          <button
+            type="button"
+            class="profile-button"
+            [attr.aria-expanded]="menuPerfilAberto()"
+            aria-label="Abrir opções do perfil"
+            (click)="alternarMenuPerfil()"
+          >
+            <i
+              class="bi"
+              [class.bi-chevron-down]="!menuPerfilAberto()"
+              [class.bi-chevron-up]="menuPerfilAberto()"
+              aria-hidden="true"
+            ></i>
+          </button>
+        </article>
+
+        @if (menuPerfilAberto()) {
+          <aside
+            class="profile-menu"
+            aria-label="Menu do usuário"
+          >
+            <header class="profile-menu-header">
+              <strong>{{ usuario.nome }}</strong>
+              <span>{{ usuario.email }}</span>
+            </header>
+
+            <nav
+              class="profile-menu-actions"
+              aria-label="Opções do usuário"
+            >
+              @if (ehAdministrador()) {
+                <a
+                  routerLink="/configuracoes"
+                  class="profile-menu-item"
+                  (click)="fecharMenuPerfil()"
+                >
+                  <i class="bi bi-gear" aria-hidden="true"></i>
+                  Configurações
+                </a>
+              }
+
+              <button
+                type="button"
+                class="profile-menu-item logout-button"
+                (click)="logout()"
+              >
+                <i
+                  class="bi bi-box-arrow-right"
+                  aria-hidden="true"
+                ></i>
+
+                Sair
+              </button>
+            </nav>
+          </aside>
+        }
+      </section>
+    }
+  </section>
+</header>

@@ -1,0 +1,135 @@
+<section class="settings-page">
+  <div class="container">
+    <div class="card">
+      <h1>Registrar Movimentação de EPI</h1>
+      <p class="subtitulo">Registrar entregas, devoluções e trocas de equipamentos de proteção.</p>
+
+      <div class="tipo-movimentacao">
+        @for (tipo of tipos; track tipo) {
+          <button type="button" [class.ativo]="formulario.tipo === tipo" (click)="selecionarTipo(tipo)">
+            {{ tipo }}
+          </button>
+        }
+      </div>
+
+      <form (ngSubmit)="salvar()" novalidate>
+        <div class="linha">
+          <div class="campo">
+            <label>Funcionário</label>
+            <input
+              type="text"
+              name="funcionario"
+              placeholder="Nome do funcionário"
+              [(ngModel)]="formulario.funcionario"
+            />
+          </div>
+
+          <div class="campo">
+            <label>Matrícula *</label>
+            <input
+              type="text"
+              name="matricula"
+              placeholder="Digite a matrícula"
+              [(ngModel)]="formulario.matricula"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="linha">
+          <div class="campo">
+            <label>EPI *</label>
+            <select name="epi" [(ngModel)]="formulario.epiId" required>
+              <option [ngValue]="null">Selecione um EPI</option>
+              @for (epi of epis; track epi.id) {
+                <option [ngValue]="epi.id">
+                  {{ epi.nome }} (validade {{ epi.validade | date: 'dd/MM/yyyy' }})
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="campo">
+            <label>Quantidade *</label>
+            <input type="number" name="quantidade" min="1" [(ngModel)]="formulario.quantidade" required />
+          </div>
+        </div>
+
+        <div class="linha">
+          <div class="campo">
+            <label>Data *</label>
+            <input type="date" name="data" [(ngModel)]="formulario.data" required />
+          </div>
+
+          <div class="campo">
+            <label>Status</label>
+            <select name="status" [(ngModel)]="formulario.status">
+              <option value="Concluído">Concluído</option>
+              <option value="Pendente">Pendente</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label>Observações</label>
+          <textarea
+            name="observacoes"
+            placeholder="Digite alguma observação..."
+            [(ngModel)]="formulario.observacoes"
+          ></textarea>
+        </div>
+
+        @if (mensagemErro) {
+          <div class="mensagem mensagem-erro" role="alert">{{ mensagemErro }}</div>
+        }
+
+        @if (mensagemSucesso) {
+          <div class="mensagem mensagem-sucesso" role="status">{{ mensagemSucesso }}</div>
+        }
+
+        <div class="botoes">
+          <button type="button" class="cancelar" (click)="limpar()">Cancelar</button>
+          <button type="submit" class="salvar" [disabled]="salvando">Salvar</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card tabela">
+      <h2>Últimas Movimentações</h2>
+
+      @if (erroLista) {
+        <div class="mensagem mensagem-erro" role="alert">{{ erroLista }}</div>
+      }
+
+      <table>
+        <thead>
+          <tr>
+            <th>Funcionário</th>
+            <th>EPI</th>
+            <th>Tipo</th>
+            <th>Qtd.</th>
+            <th>Data</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (movimentacao of ultimasMovimentacoes; track movimentacao.id) {
+            <tr>
+              <td>{{ movimentacao.funcionario }}</td>
+              <td>{{ movimentacao.epi }}</td>
+              <td>{{ movimentacao.tipo }}</td>
+              <td>{{ movimentacao.quantidade }}</td>
+              <td>{{ movimentacao.data | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ movimentacao.status }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6">Nenhuma movimentação registrada.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

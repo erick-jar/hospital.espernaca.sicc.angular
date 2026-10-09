@@ -1,0 +1,187 @@
+<!-- HTML da Pagina Relatorios -->
+
+<div class="container-fluid my-4 printable-area">
+
+  <section class="d-flex justify-content-between align-items-center mb-4 no-print">
+    <h2>Relatórios do Sistema</h2>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-primary new-user-button" (click)="imprimirTabela()">
+        <i class="bi bi-printer me-2"></i> Imprimir
+      </button>
+    </div>
+  </section>
+
+  
+  <section class="card mb-4 no-print">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label">Tipo de Relatório</label>
+          <select
+            class="form-select"
+            [(ngModel)]="tipoRelatorioSelecionado"
+            (change)="filtrarDados()"
+          >
+            <option value="TREINAMENTOS">Relatório de Treinamentos</option>
+            <option value="ESTOQUE">Relatório de Posição de Estoque</option>
+            <option value="ENTREGAS">Relatório de Entregas</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Data Inicial</label>
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="dataInicio"
+            (change)="filtrarDados()"
+          />
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Data Final</label>
+          <input type="date" class="form-control" [(ngModel)]="dataFim" (change)="filtrarDados()" />
+        </div>
+
+        <div class="col-md-3" *ngIf="tipoRelatorioSelecionado === 'ENTREGAS'">
+          <label class="form-label">Buscar Colaborador</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control border-start-0 ps-0"
+              placeholder="Digite o nome..."
+              [(ngModel)]="buscaColaborador"
+              (input)="filtrarDados()"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card border-0">
+    <div class="card-header">
+      <h4 class="mb-1">
+        <span *ngIf="tipoRelatorioSelecionado === 'TREINAMENTOS'"
+          >Relatório de Status e Validade de Treinamentos</span
+        >
+        <span *ngIf="tipoRelatorioSelecionado === 'ESTOQUE'"
+          >Relatório de Saldo e Reposição de Estoque de EPIs</span
+        >
+        <span *ngIf="tipoRelatorioSelecionado === 'ENTREGAS'"
+          >Relatório de Histórico de Entregas de EPIs</span
+        >
+      </h4>
+      <small
+        >Período selecionado: {{ dataInicio | date: 'dd/MM/yyyy' }} até
+        {{ dataFim | date: 'dd/MM/yyyy' }}</small
+      >
+    </div>
+
+    <div class="card-body p-0">
+      <!-- TABELA 1: TREINAMENTOS -->
+      <section class="table-responsive" *ngIf="tipoRelatorioSelecionado === 'TREINAMENTOS'">
+        <table class="table table-striped align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Treinamento / Norma</th>
+              <th class="text">Data</th>
+              <th class="text-center">Concluídos</th>
+              <th class="text-center">Pendentes</th>
+              <th>Situação Geral</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of relatorioTreinamentos">
+              <td>
+                <strong>{{ item.titulo }}</strong>
+                <span class="text-muted">({{ item.norma }})</span>
+              </td>
+              <td>{{ item.data | date: 'dd/MM/yyyy' }}</td>
+              <td class="text-center fw-bold" style="color: var(--success)">
+                {{ item.concluidos }}
+              </td>
+              <td class="text-center fw-bold" style="color: var(--danger)">{{ item.pendentes }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [ngClass]="item.status === 'Regular' ? 'bg-success' : 'bg-warning'"
+                >
+                  {{ item.status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- TABELA 2: ESTOQUE -->
+      <section class="table-responsive" *ngIf="tipoRelatorioSelecionado === 'ESTOQUE'">
+        <table class="table table-striped align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Código</th>
+              <th>Data</th>
+              <th>Descrição do Item</th>
+              <th class="text-center">Saldo Atual</th>
+              <th class="text-center">Estoque Mínimo</th>
+              <th>Status do Estoque</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of relatorioEstoque">
+              <td>
+                <code>{{ item.codigo }}</code>
+              </td>
+              <td>{{ item.data | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ item.item }}</td>
+              <td class="text-center fw-bold">{{ item.saldo }}</td>
+              <td class="text-center text-muted">{{ item.estoqueMinimo }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [ngClass]="{
+                    'bg-success': item.status === 'OK',
+                    'bg-warning': item.status === 'REPOR',
+                    'bg-danger': item.status === 'CRÍTICO',
+                  }"
+                  >{{ item.status }}</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- TABELA 3: ENTREGAS -->
+      <section class="table-responsive" *ngIf="tipoRelatorioSelecionado === 'ENTREGAS'">
+        <table class="table table-striped align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              
+              <th>Colaborador</th>
+              <th>Data</th>
+              <th>Setor</th>
+              <th>EPI Entregue</th>
+              <th>Motivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of relatorioEntregas">
+              <td>
+                <strong>{{ item.colaborador }}</strong>
+              </td>
+              <td>{{ item.data | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ item.setor }}</td>
+              <td>{{ item.epi }}</td>
+              <td>{{ item.motivo }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,170 @@
+<div class="toolbar">
+  <div class="busca">
+    <i class="bi bi-search" aria-hidden="true"></i>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar por nome ou setor"
+      [(ngModel)]="termoBusca"
+      aria-label="Buscar função"
+    />
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="abrirNovo()">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    Nova função
+  </button>
+</div>
+
+@if (erroLista) {
+  <div class="alert alert-danger" role="alert">{{ erroLista }}</div>
+}
+
+<div class="table-card">
+  @if (funcoesFiltradas.length === 0) {
+    <div class="empty-state">
+      <i class="bi bi-briefcase-fill" aria-hidden="true"></i>
+      <p>Nenhuma função encontrada.</p>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Setor</th>
+            <th>EPIs obrigatórios</th>
+            <th>Status</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (funcao of funcoesFiltradas; track funcao.id) {
+            <tr>
+              <td>{{ funcao.id }}</td>
+              <td>{{ funcao.nome }}</td>
+              <td>{{ funcao.setor }}</td>
+              <td>{{ funcao.episObrigatorios.join(', ') || '—' }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge-success]="funcao.status === 'Ativo'"
+                  [class.badge-neutral]="funcao.status === 'Inativo'"
+                >
+                  {{ funcao.status }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button type="button" class="btn-icon" title="Editar" aria-label="Editar função" (click)="abrirEdicao(funcao)">
+                  <i class="bi bi-pencil-fill" aria-hidden="true"></i>
+                </button>
+
+                <button type="button" class="btn-icon btn-icon-danger" title="Excluir" aria-label="Excluir função" (click)="confirmarExclusao(funcao)">
+                  <i class="bi bi-trash-fill" aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (modalAberto) {
+  <div class="modal-backdrop-custom" (click)="fecharModal()"></div>
+
+  <div class="modal-custom" role="dialog" aria-modal="true" aria-label="Formulário de função">
+    <header class="modal-custom-header">
+      <h2>{{ modoEdicao ? 'Editar função' : 'Nova função' }}</h2>
+      <button type="button" class="btn-icon" aria-label="Fechar" (click)="fecharModal()">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <form class="modal-custom-body" (ngSubmit)="salvar()">
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label" for="nome">Nome da função *</label>
+          <input id="nome" type="text" class="form-control" [(ngModel)]="formulario.nome" name="nome" required />
+          @if (tentouSalvar && !formulario.nome.trim()) {
+            <small class="form-error">O nome é obrigatório.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="setor">Setor relacionado *</label>
+          <input id="setor" type="text" class="form-control" [(ngModel)]="formulario.setor" name="setor" required />
+        </div>
+
+        <div class="form-field" style="grid-column: 1 / -1;">
+          <label class="form-label" for="descricao">Descrição</label>
+          <textarea id="descricao" class="form-control" rows="2" [(ngModel)]="formulario.descricao" name="descricao"></textarea>
+        </div>
+
+        <div class="form-field" style="grid-column: 1 / -1;">
+          <label class="form-label" for="epis">EPIs obrigatórios/recomendados</label>
+          <input
+            id="epis"
+            type="text"
+            class="form-control"
+            [(ngModel)]="formulario.episObrigatoriosTexto"
+            name="epis"
+            placeholder="Ex.: Luva de Látex, Máscara N95"
+          />
+          <small class="form-error" style="color: var(--text-soft);">Separe os itens por vírgula.</small>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="status">Status</label>
+          <select id="status" class="form-select" [(ngModel)]="formulario.status" name="status">
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+          </select>
+        </div>
+      </div>
+
+      @if (mensagemErro) {
+        <div class="alert alert-danger mt-3 mb-0" role="alert">{{ mensagemErro }}</div>
+      }
+
+      <footer class="modal-custom-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="salvando">
+          <i class="bi bi-check-lg" aria-hidden="true"></i>
+          Salvar
+        </button>
+      </footer>
+    </form>
+  </div>
+}
+
+@if (funcaoParaExcluir) {
+  <div class="modal-backdrop-custom" (click)="cancelarExclusao()"></div>
+
+  <div class="modal-custom modal-custom-sm" role="alertdialog" aria-modal="true">
+    <header class="modal-custom-header">
+      <h2>Excluir função</h2>
+    </header>
+
+    <div class="modal-custom-body">
+      <p>
+        Tem certeza de que deseja excluir
+        <strong>{{ funcaoParaExcluir.nome }}</strong>? Esta ação não pode ser desfeita.
+      </p>
+
+      @if (erroExclusao) {
+        <div class="alert alert-danger mt-3 mb-0" role="alert">{{ erroExclusao }}</div>
+      }
+    </div>
+
+    <footer class="modal-custom-footer">
+      <button type="button" class="btn btn-outline-primary" (click)="cancelarExclusao()">Cancelar</button>
+      <button type="button" class="btn btn-outline-danger" (click)="excluir()">
+        <i class="bi bi-trash-fill" aria-hidden="true"></i>
+        Excluir
+      </button>
+    </footer>
+  </div>
+}

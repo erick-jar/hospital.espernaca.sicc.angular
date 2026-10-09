@@ -1,0 +1,47 @@
+.page-header {
+  margin-bottom: 24px;
+}
+
+.kicker {
+  display: block;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--secondary);
+  margin-bottom: 6px;
+}
+
+.page-header h1 {
+  font-weight: 800;
+  font-size: 30px;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.page-header p {
+  color: var(--text-soft);
+  margin: 0;
+}
+
+.cadastro-tabs {
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cadastro-tabs .nav-link {
+  color: var(--text-soft);
+  font-weight: 700;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 4px;
+  margin-right: 24px;
+}
+
+.cadastro-tabs .nav-link.active {
+  color: var(--secondary);
+  border-bottom-color: var(--secondary);
+}

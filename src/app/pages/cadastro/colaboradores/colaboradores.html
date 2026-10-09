@@ -1,0 +1,208 @@
+<div class="toolbar">
+  <div class="busca">
+    <i class="bi bi-search" aria-hidden="true"></i>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar por nome, matrícula ou setor"
+      [(ngModel)]="termoBusca"
+      aria-label="Buscar colaborador"
+    />
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="abrirNovo()">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    Novo colaborador
+  </button>
+</div>
+
+@if (erroLista) {
+  <div class="alert alert-danger" role="alert">{{ erroLista }}</div>
+}
+
+<div class="table-card">
+  @if (colaboradoresFiltrados.length === 0) {
+    <div class="empty-state">
+      <i class="bi bi-people" aria-hidden="true"></i>
+      <p>Nenhum colaborador encontrado.</p>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Matrícula</th>
+            <th>Nome</th>
+            <th>Setor</th>
+            <th>Função</th>
+            <th>Admissão</th>
+            <th>Status</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (colaborador of colaboradoresFiltrados; track colaborador.id) {
+            <tr>
+              <td>{{ colaborador.matricula }}</td>
+              <td>{{ colaborador.nome }}</td>
+              <td>{{ colaborador.setor }}</td>
+              <td>{{ colaborador.funcao }}</td>
+              <td>{{ colaborador.admissao | date: 'dd/MM/yyyy' }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge-success]="colaborador.status === 'Ativo'"
+                  [class.badge-neutral]="colaborador.status === 'Inativo'"
+                >
+                  {{ colaborador.status }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button type="button" class="btn-icon" title="Editar" aria-label="Editar colaborador" (click)="abrirEdicao(colaborador)">
+                  <i class="bi bi-pencil-fill" aria-hidden="true"></i>
+                </button>
+
+                <button type="button" class="btn-icon btn-icon-danger" title="Excluir" aria-label="Excluir colaborador" (click)="confirmarExclusao(colaborador)">
+                  <i class="bi bi-trash-fill" aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (modalAberto) {
+  <div class="modal-backdrop-custom" (click)="fecharModal()"></div>
+
+  <div class="modal-custom" role="dialog" aria-modal="true" aria-label="Formulário de colaborador">
+    <header class="modal-custom-header">
+      <h2>{{ modoEdicao ? 'Editar colaborador' : 'Novo colaborador' }}</h2>
+      <button type="button" class="btn-icon" aria-label="Fechar" (click)="fecharModal()">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <form class="modal-custom-body" (ngSubmit)="salvar()">
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label" for="matricula">Matrícula *</label>
+          <input id="matricula" type="text" class="form-control" [(ngModel)]="formulario.matricula" name="matricula" required />
+          @if (tentouSalvar && !formulario.matricula.trim()) {
+            <small class="form-error">A matrícula é obrigatória.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="nome">Nome completo *</label>
+          <input id="nome" type="text" class="form-control" [(ngModel)]="formulario.nome" name="nome" required />
+          @if (tentouSalvar && !formulario.nome.trim()) {
+            <small class="form-error">O nome é obrigatório.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="cpf">CPF *</label>
+          <input id="cpf" type="text" class="form-control" [(ngModel)]="formulario.cpf" name="cpf" required />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="funcao">Função *</label>
+          <select
+            id="funcao"
+            class="form-select"
+            name="funcaoId"
+            [ngModel]="formulario.funcaoId"
+            (ngModelChange)="aoSelecionarFuncao($event)"
+            required
+          >
+            <option [ngValue]="null">Selecione a função</option>
+            @for (funcao of funcoesDoSelect; track funcao.id) {
+              <option [ngValue]="funcao.id">{{ funcao.nome }}</option>
+            }
+          </select>
+          @if (tentouSalvar && formulario.funcaoId === null) {
+            <small class="form-error">Selecione a função.</small>
+          }
+          @if (erroFuncoes) {
+            <small class="form-error">{{ erroFuncoes }}</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="setor">Setor</label>
+          <input
+            id="setor"
+            type="text"
+            class="form-control"
+            name="setor"
+            [value]="formulario.setor"
+            placeholder="Preenchido pela função"
+            readonly
+          />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="admissao">Data de admissão *</label>
+          <input id="admissao" type="date" class="form-control" [(ngModel)]="formulario.admissao" name="admissao" required />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="contato">Contato</label>
+          <input id="contato" type="text" class="form-control" [(ngModel)]="formulario.contato" name="contato" />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="status">Status</label>
+          <select id="status" class="form-select" [(ngModel)]="formulario.status" name="status">
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+          </select>
+        </div>
+      </div>
+
+      @if (mensagemErro) {
+        <div class="alert alert-danger mt-3 mb-0" role="alert">{{ mensagemErro }}</div>
+      }
+
+      <footer class="modal-custom-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="salvando">
+          <i class="bi bi-check-lg" aria-hidden="true"></i>
+          Salvar
+        </button>
+      </footer>
+    </form>
+  </div>
+}
+
+@if (colaboradorParaExcluir) {
+  <div class="modal-backdrop-custom" (click)="cancelarExclusao()"></div>
+
+  <div class="modal-custom modal-custom-sm" role="alertdialog" aria-modal="true">
+    <header class="modal-custom-header">
+      <h2>Excluir colaborador</h2>
+    </header>
+
+    <div class="modal-custom-body">
+      <p>
+        Tem certeza de que deseja excluir
+        <strong>{{ colaboradorParaExcluir.nome }}</strong>? Esta ação não pode ser desfeita.
+      </p>
+
+      @if (erroExclusao) {
+        <div class="alert alert-danger mt-3 mb-0" role="alert">{{ erroExclusao }}</div>
+      }
+    </div>
+
+    <footer class="modal-custom-footer">
+      <button type="button" class="btn btn-outline-primary" (click)="cancelarExclusao()">Cancelar</button>
+      <button type="button" class="btn btn-outline-danger" (click)="excluir()">
+        <i class="bi bi-trash-fill" aria-hidden="true"></i>
+        Excluir
+      </button>
+    </footer>
+  </div>
+}

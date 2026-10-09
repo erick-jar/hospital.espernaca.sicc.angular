@@ -1,0 +1,280 @@
+:host {
+  display: block;
+}
+
+.recovery-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 1fr);
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+.brand-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 48px;
+  color: #ffffff;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(6, 134, 212, 0.35),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #0d345a 0%,
+      #184f72 52%,
+      #0868a3 100%
+    );
+}
+
+.brand-panel::before,
+.brand-panel::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.brand-panel::before {
+  width: 340px;
+  height: 340px;
+  top: -120px;
+  right: -100px;
+}
+
+.brand-panel::after {
+  width: 260px;
+  height: 260px;
+  bottom: -100px;
+  left: -80px;
+}
+
+.brand-content {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 560px);
+}
+
+.brand-kicker {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.brand-content h1 {
+  margin: 0;
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.brand-content > p {
+  max-width: 480px;
+  margin: 20px 0 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.brand-benefits {
+  display: grid;
+  gap: 14px;
+  margin-top: 42px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.benefit-item i {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 17px;
+}
+
+.form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.recovery-card {
+  width: min(100%, 480px);
+  padding: 42px;
+  border: 1px solid rgba(219, 228, 238, 0.9);
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow-md);
+  animation: card-entry 350ms ease;
+}
+
+.recovery-header {
+  margin-bottom: 32px;
+}
+
+.recovery-kicker {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--secondary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.recovery-header h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.recovery-header p {
+  margin: 10px 0 0;
+  color: var(--text-soft);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.recovery-input {
+  height: 50px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+
+.recovery-button {
+  width: 100%;
+  height: 52px;
+  font-size: 14px;
+}
+
+.recovery-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius-md);
+  color: #047857;
+  background-color: var(--success-soft);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.recovery-alert i {
+  margin-top: 2px;
+  color: var(--success);
+  font-size: 16px;
+}
+
+.back-login {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.back-login a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--secondary);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back-login a:hover {
+  text-decoration: underline;
+}
+
+@keyframes card-entry {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 991px) {
+  .recovery-page {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-panel {
+    min-height: 290px;
+    padding: 42px 24px;
+  }
+
+  .brand-content {
+    text-align: center;
+  }
+
+  .brand-content > p {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .brand-benefits {
+    display: none;
+  }
+
+  .form-panel {
+    padding: 28px 18px 40px;
+  }
+
+  .recovery-card {
+    margin-top: -48px;
+  }
+}
+
+@media (max-width: 575px) {
+  .brand-panel {
+    min-height: 240px;
+  }
+
+  .brand-content h1 {
+    font-size: 46px;
+  }
+
+  .brand-content > p {
+    font-size: 14px;
+  }
+
+  .recovery-card {
+    padding: 28px 22px;
+    border-radius: 22px;
+  }
+
+  .recovery-header h2 {
+    font-size: 31px;
+  }
+}

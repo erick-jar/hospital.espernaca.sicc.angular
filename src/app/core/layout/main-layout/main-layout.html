@@ -1,0 +1,16 @@
+<div class="app-shell">
+  <app-sidebar
+    [menuAberto]="menuAberto()"
+    (fecharMenuSolicitado)="fecharMenu()"
+  />
+
+  <section class="main-area">
+    <app-topbar
+      (abrirMenu)="abrirMenu()"
+    />
+
+    <main class="page-content">
+      <router-outlet />
+    </main>
+  </section>
+</div>

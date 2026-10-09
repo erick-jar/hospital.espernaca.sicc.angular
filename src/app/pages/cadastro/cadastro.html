@@ -1,0 +1,55 @@
+<section class="page-header">
+  <span class="kicker">GESTÃO DE REGISTROS</span>
+  <h1>Cadastros</h1>
+  <p>Gerencie colaboradores, EPIs e funções utilizados em todo o SICC.</p>
+</section>
+
+<nav class="nav nav-tabs cadastro-tabs" aria-label="Tipos de cadastro">
+  @if (podeVerColaboradores()) {
+    <button
+      type="button"
+      class="nav-link"
+      [class.active]="tabAtiva === 'colaboradores'"
+      (click)="selecionarTab('colaboradores')"
+    >
+      <i class="bi bi-people-fill" aria-hidden="true"></i>
+      Colaboradores
+    </button>
+  }
+
+  @if (podeVerEpisEFuncoes()) {
+    <button
+      type="button"
+      class="nav-link"
+      [class.active]="tabAtiva === 'epis'"
+      (click)="selecionarTab('epis')"
+    >
+      <i class="bi bi-shield-fill-check" aria-hidden="true"></i>
+      EPIs
+    </button>
+
+    <button
+      type="button"
+      class="nav-link"
+      [class.active]="tabAtiva === 'funcoes'"
+      (click)="selecionarTab('funcoes')"
+    >
+      <i class="bi bi-briefcase-fill" aria-hidden="true"></i>
+      Funções
+    </button>
+  }
+</nav>
+
+<div class="tab-content-area">
+  @if (tabAtiva === 'colaboradores' && podeVerColaboradores()) {
+    <app-colaboradores />
+  }
+
+  @if (tabAtiva === 'epis' && podeVerEpisEFuncoes()) {
+    <app-epis />
+  }
+
+  @if (tabAtiva === 'funcoes' && podeVerEpisEFuncoes()) {
+    <app-funcoes />
+  }
+</div>
