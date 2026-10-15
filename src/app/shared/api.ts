@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
 /** Endereço do back end (Spring Boot). Altere aqui se a API mudar de porta ou servidor. */
-export const API_URL = 'https://hospital-esperanca-sicc-java.onrender.com/';
+export const API_URL = 'https://hospital-esperanca-sicc-java.onrender.com/api';
 
 interface ErroApi {
   mensagem?: string;
