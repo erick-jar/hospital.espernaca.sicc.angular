@@ -1,0 +1,40 @@
+.page-header {
+  animation: page-entry 350ms ease;
+}
+
+.page-kicker {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--secondary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.page-header h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(27px, 3vw, 36px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.page-header p {
+  margin: 10px 0 0;
+  color: var(--text-soft);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+@keyframes page-entry {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

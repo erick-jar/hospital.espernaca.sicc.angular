@@ -1,0 +1,107 @@
+<main class="recovery-page">
+  <section class="brand-panel" aria-labelledby="sicc-title">
+    <div class="brand-content">
+      <span class="brand-kicker">Hospital Esperança</span>
+
+      <h1 id="sicc-title">SICC</h1>
+
+      <p>
+        Sistema Interno de Cadastro e Controle
+      </p>
+
+      <section
+        class="brand-benefits"
+        aria-label="Segurança e recuperação de acesso"
+      >
+        <article class="benefit-item">
+          <i class="bi bi-envelope-check" aria-hidden="true"></i>
+          <span>Recuperação segura por e-mail</span>
+        </article>
+
+        <article class="benefit-item">
+          <i class="bi bi-shield-lock" aria-hidden="true"></i>
+          <span>Proteção dos dados de acesso</span>
+        </article>
+      </section>
+    </div>
+  </section>
+
+  <section
+    class="form-panel"
+    aria-labelledby="recovery-title"
+  >
+    <article class="recovery-card">
+      <header class="recovery-header">
+        <span class="recovery-kicker">Recuperação de acesso</span>
+
+        <h2 id="recovery-title">Esqueci minha senha</h2>
+
+        <p>
+          Informe o e-mail cadastrado para receber as instruções
+          de redefinição de senha.
+        </p>
+      </header>
+
+      <form (ngSubmit)="enviarLink()" novalidate>
+        <div class="mb-3">
+          <label for="email" class="form-label">
+            E-mail cadastrado *
+          </label>
+
+          <input
+            id="email"
+            name="email"
+            type="email"
+            class="form-control recovery-input"
+            placeholder="Digite seu e-mail"
+            autocomplete="email"
+            [(ngModel)]="email"
+            [class.is-invalid]="tentouEnviar && !emailValido()"
+          />
+
+          @if (tentouEnviar && !email.trim()) {
+            <div class="invalid-feedback">
+              O campo E-mail é obrigatório.
+            </div>
+          } @else if (tentouEnviar && !emailValido()) {
+            <div class="invalid-feedback">
+              Digite um e-mail válido.
+            </div>
+          }
+        </div>
+
+        @if (mensagemSucesso) {
+          <div class="alert alert-success recovery-alert" role="alert">
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+
+            <span>{{ mensagemSucesso }}</span>
+          </div>
+        }
+
+        <button
+          type="submit"
+          class="btn btn-primary recovery-button"
+          [disabled]="carregando"
+        >
+          @if (carregando) {
+            <span
+              class="spinner-border spinner-border-sm me-2"
+              aria-hidden="true"
+            ></span>
+
+            Enviando...
+          } @else {
+            Enviar instruções
+          }
+        </button>
+
+        <nav class="back-login" aria-label="Voltar para o acesso">
+          <a routerLink="/">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            Voltar para o Login
+          </a>
+        </nav>
+      </form>
+    </article>
+  </section>
+</main>

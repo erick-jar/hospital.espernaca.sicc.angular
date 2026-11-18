@@ -1,0 +1,189 @@
+<div class="toolbar">
+  <div class="busca">
+    <i class="bi bi-search" aria-hidden="true"></i>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar por nome, código ou categoria"
+      [(ngModel)]="termoBusca"
+      aria-label="Buscar EPI"
+    />
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="abrirNovo()">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    Novo EPI
+  </button>
+</div>
+
+@if (erroLista) {
+  <div class="alert alert-danger" role="alert">{{ erroLista }}</div>
+}
+
+<div class="table-card">
+  @if (episFiltrados.length === 0) {
+    <div class="empty-state">
+      <i class="bi bi-shield-fill-check" aria-hidden="true"></i>
+      <p>Nenhum EPI encontrado.</p>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nome</th>
+            <th>CA</th>
+            <th>Validade</th>
+            <th>Categoria</th>
+            <th>Estoque mínimo</th>
+            <th>Status</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (epi of episFiltrados; track epi.id) {
+            <tr>
+              <td>{{ epi.codigo }}</td>
+              <td>{{ epi.nome }}</td>
+              <td>{{ epi.ca }}</td>
+              <td>{{ epi.validade | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ epi.categoria }}</td>
+              <td>{{ epi.estoqueMinimo }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge-success]="epi.status === 'Ativo'"
+                  [class.badge-neutral]="epi.status === 'Inativo'"
+                >
+                  {{ epi.status }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button type="button" class="btn-icon" title="Editar" aria-label="Editar EPI" (click)="abrirEdicao(epi)">
+                  <i class="bi bi-pencil-fill" aria-hidden="true"></i>
+                </button>
+
+                <button type="button" class="btn-icon btn-icon-danger" title="Excluir" aria-label="Excluir EPI" (click)="confirmarExclusao(epi)">
+                  <i class="bi bi-trash-fill" aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (modalAberto) {
+  <div class="modal-backdrop-custom" (click)="fecharModal()"></div>
+
+  <div class="modal-custom" role="dialog" aria-modal="true" aria-label="Formulário de EPI">
+    <header class="modal-custom-header">
+      <h2>{{ modoEdicao ? 'Editar EPI' : 'Novo EPI' }}</h2>
+      <button type="button" class="btn-icon" aria-label="Fechar" (click)="fecharModal()">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <form class="modal-custom-body" (ngSubmit)="salvar()">
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label" for="codigo">Código *</label>
+          <input id="codigo" type="text" class="form-control" [(ngModel)]="formulario.codigo" name="codigo" required />
+          @if (tentouSalvar && !formulario.codigo.trim()) {
+            <small class="form-error">O código é obrigatório.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="nome">Nome do EPI *</label>
+          <input id="nome" type="text" class="form-control" [(ngModel)]="formulario.nome" name="nome" required />
+          @if (tentouSalvar && !formulario.nome.trim()) {
+            <small class="form-error">O nome é obrigatório.</small>
+          }
+        </div>
+
+        <div class="form-field" style="grid-column: 1 / -1;">
+          <label class="form-label" for="descricao">Descrição</label>
+          <textarea id="descricao" class="form-control" rows="2" [(ngModel)]="formulario.descricao" name="descricao"></textarea>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="ca">CA - Certificado de Aprovação *</label>
+          <input id="ca" type="text" class="form-control" [(ngModel)]="formulario.ca" name="ca" required />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="validade">Validade *</label>
+          <input id="validade" type="date" class="form-control" [(ngModel)]="formulario.validade" name="validade" required />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="fabricante">Fabricante *</label>
+          <input id="fabricante" type="text" class="form-control" [(ngModel)]="formulario.fabricante" name="fabricante" required />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="categoria">Categoria *</label>
+          <input id="categoria" type="text" class="form-control" [(ngModel)]="formulario.categoria" name="categoria" required />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="estoqueMinimo">Estoque mínimo</label>
+          <input id="estoqueMinimo" type="number" min="0" class="form-control" [(ngModel)]="formulario.estoqueMinimo" name="estoqueMinimo" />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="status">Status</label>
+          <select id="status" class="form-select" [(ngModel)]="formulario.status" name="status">
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+          </select>
+        </div>
+      </div>
+
+      @if (mensagemErro) {
+        <div class="alert alert-danger mt-3 mb-0" role="alert">{{ mensagemErro }}</div>
+      }
+
+      <footer class="modal-custom-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="salvando">
+          <i class="bi bi-check-lg" aria-hidden="true"></i>
+          Salvar
+        </button>
+      </footer>
+    </form>
+  </div>
+}
+
+@if (epiParaExcluir) {
+  <div class="modal-backdrop-custom" (click)="cancelarExclusao()"></div>
+
+  <div class="modal-custom modal-custom-sm" role="alertdialog" aria-modal="true">
+    <header class="modal-custom-header">
+      <h2>Excluir EPI</h2>
+    </header>
+
+    <div class="modal-custom-body">
+      <p>
+        Tem certeza de que deseja excluir
+        <strong>{{ epiParaExcluir.nome }}</strong>? Esta ação não pode ser desfeita.
+      </p>
+
+      @if (erroExclusao) {
+        <div class="alert alert-danger mt-3 mb-0" role="alert">{{ erroExclusao }}</div>
+      }
+    </div>
+
+    <footer class="modal-custom-footer">
+      <button type="button" class="btn btn-outline-primary" (click)="cancelarExclusao()">Cancelar</button>
+      <button type="button" class="btn btn-outline-danger" (click)="excluir()">
+        <i class="bi bi-trash-fill" aria-hidden="true"></i>
+        Excluir
+      </button>
+    </footer>
+  </div>
+}

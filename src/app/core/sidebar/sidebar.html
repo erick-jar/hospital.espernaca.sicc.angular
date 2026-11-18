@@ -1,0 +1,152 @@
+<aside
+  class="sidebar"
+  [class.sidebar-open]="menuAberto"
+  aria-label="Menu principal do SICC"
+>
+  <header class="sidebar-header">
+    <a
+      routerLink="/dashboard"
+      class="brand"
+      aria-label="Ir para o Dashboard"
+      (click)="fecharMenu()"
+    >
+      <span class="brand-icon">
+        <i class="bi bi-shield-check" aria-hidden="true"></i>
+      </span>
+
+      <span class="brand-text">
+        <strong>SICC</strong>
+        <small>Hospital Esperança</small>
+      </span>
+    </a>
+
+    <button
+      type="button"
+      class="close-sidebar"
+      aria-label="Fechar menu"
+      (click)="fecharMenu()"
+    >
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <nav class="sidebar-nav" aria-label="Navegação principal">
+    <span class="menu-label">Menu principal</span>
+
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      class="menu-item"
+      (click)="fecharMenu()"
+    >
+      <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>
+      <span>Dashboard</span>
+    </a>
+
+    @if (podeVerColaboradores()) {
+      <a
+        routerLink="/cadastro"
+        [queryParams]="{ tab: 'colaboradores' }"
+        routerLinkActive="active"
+        class="menu-item"
+        (click)="fecharMenu()"
+      >
+        <i class="bi bi-people-fill" aria-hidden="true"></i>
+        <span>{{ 'Cadastros' }}</span>
+      </a>
+    }
+
+    <!-- @if (podeVerEpis()) {
+      <a
+        routerLink="/cadastro"
+        [queryParams]="{ tab: 'epis' }"
+        routerLinkActive="active"
+        class="menu-item"
+        (click)="fecharMenu()"
+      >
+        <i class="bi bi-shield-fill-check" aria-hidden="true"></i>
+        <span>EPIs</span>
+      </a>
+    } -->
+
+                <!-- Parte do Gustavo-->
+      <a
+    routerLink="/gestao-de-epis"
+    routerLinkActive="active"
+    class="menu-item"
+    (click)="fecharMenu()"      
+  >
+    <i class="bi bi-box-seam-fill" aria-hidden="true"></i>
+    <span>Gestão de EPIs</span>
+  </a>      
+                  <!--//////-->
+
+    <a
+      routerLink="/estoque"
+      routerLinkActive="active"
+      class="menu-item"
+      (click)="fecharMenu()"
+    >
+      <i class="bi bi-box-seam-fill" aria-hidden="true"></i>
+      <span>Estoque</span>
+    </a>
+
+    <a
+      routerLink="/treinamentos"
+      routerLinkActive="active"
+      class="menu-item"
+      (click)="fecharMenu()"
+    >
+      <i class="bi bi-mortarboard-fill" aria-hidden="true"></i>
+      <span>Treinamentos</span>
+    </a>
+
+    <a
+      routerLink="/relatorio"
+      routerLinkActive="active"
+      class="menu-item"
+      (click)="fecharMenu()"
+    >
+      <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>
+      <span>Relatórios</span>
+    </a>
+
+    @if (ehAdministrador())
+    
+    {
+      <span class="menu-label secondary-label">
+        Administração
+      </span>
+
+      <a
+        routerLink="/configuracoes"
+        routerLinkActive="active"
+        class="menu-item"
+        (click)="fecharMenu()"
+      >
+        <i class="bi bi-gear-fill" aria-hidden="true"></i>
+        <span>Configurações</span>
+      </a>
+    }
+  </nav>
+
+  <footer class="sidebar-footer">
+    <article class="system-status">
+      <span class="status-dot" aria-hidden="true"></span>
+
+      <span>
+        <strong>Sistema operacional</strong>
+        <small>Todos os serviços disponíveis</small>
+      </span>
+    </article>
+  </footer>
+</aside>
+
+@if (menuAberto) {
+  <button
+    type="button"
+    class="sidebar-overlay"
+    aria-label="Fechar menu lateral"
+    (click)="fecharMenu()"
+  ></button>
+}

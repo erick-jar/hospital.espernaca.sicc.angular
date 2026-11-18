@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css?family=Inter:wght@400;500;600;700;800&display=swap');
+
+
+/* ==========================================================================
+   Tipografia
+   ========================================================================== */
+h2, h4, h5 {
+  font-weight: 800;
+  color: var(--text);
+}
+
+h2 { font-size: clamp(27px, 3vw, 36px); }
+h4 { font-size: clamp(18px, 2vw, 22px); }
+h5 { font-size: 16px; }
+
+label.form-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+small {
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+/* ==========================================================================
+   Cards Globais SICC
+   ========================================================================== */
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: all 180ms ease;
+  overflow: hidden;
+
+  .card-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+
+    h4 {
+      /* color: var(--surface); */
+    }
+    
+    small {
+      /* color: rgba(255, 255, 255, 0.8); */
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+/* ==========================================================================
+   Controles de Formulário e Botões
+   ========================================================================== */
+.form-control, .form-select {
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  color: var(--text);
+  background-color: #FBFDFF;
+  font-size: 14px;
+  transition: all 180ms ease;
+
+  &:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 0.25rem rgba(6, 134, 212, 0.10);
+    background-color: var(--surface);
+  }
+}
+
+.new-user-button,
+.save-button {
+  min-height: 44px;
+  padding: 0 18px;
+}
+
+.btn {
+  height: 44px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 180ms ease;
+  padding: 0 1.25rem;
+  
+  &.btn-dark {
+    background-color: var(--text);
+    border-color: var(--text);
+    color: var(--surface);
+    
+    &:hover {
+      background-color: lighten(#112f4e, 10%);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-color: transparent;
+  color: #fff;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   Badges e Status Semânticos
+   ========================================================================== */
+.badge {
+  font-weight: 700;
+  font-size: 11px;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &.bg-success {
+    background-color: var(--success-soft) !important;
+    color: var(--success) !important;
+  }
+  
+  &.bg-warning {
+    background-color: var(--warning-soft) !important;
+    color: #9B6803 !important; 
+  
+  &.bg-danger {
+    background-color: var(--danger-soft) !important;
+    color: var(--danger) !important;
+  }
+}
+}
+/* ==========================================================================
+   Estilos de Tabela
+   ========================================================================== */
+.table-responsive {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  
+  table {
+    margin-bottom: 0;
+    
+    thead.table-light th {
+      background-color: #F8FAFC;
+      color: var(--text-soft);
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem;
+    }
+    
+    tbody {
+      tr {
+        border-bottom: 1px solid var(--border);
+        
+        td {
+          padding: 1rem;
+          color: var(--text);
+          font-size: 14px;
+          vertical-align: middle;
+          background-color: var(--surface);
+          
+          code {
+            color: var(--text-soft);
+            background-color: var(--surface-soft);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 13px;
+          }
+        }
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        &:hover td {
+          background-color: rgba(237, 242, 254, 0.4); 
+        }
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   Comportamento de Impressão (Print Layout)
+   ========================================================================== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .printable-area {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  
+  .card {
+    border: none !important;
+    box-shadow: none !important;
+    
+    .card-header {
+      background-color: transparent !important;
+      border-bottom: 2px solid var(--text) !important;
+      padding: 0 0 1rem 0 !important;
+      
+      h4 {
+        color: var(--text) !important;
+      }
+      small {
+        color: var(--text-soft) !important;
+      }
+    }
+  }
+  
+  .badge {
+    border: 1px solid #ccc;
+    background: transparent !important;
+    color: #000 !important;
+  }
+  
+  table {
+    border: 1px solid #ddd;
+    
+    th, td {
+      border: 1px solid #ddd !important;
+      color: #000 !important;
+    }
+  }
+}

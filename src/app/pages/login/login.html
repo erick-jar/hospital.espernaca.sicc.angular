@@ -1,0 +1,162 @@
+<main class="login-page">
+  <section class="brand-panel" aria-labelledby="sicc-title">
+    <div class="brand-content">
+      <span class="brand-kicker">Hospital Esperança</span>
+
+      <h1 id="sicc-title">SICC</h1>
+
+      <p>
+        Sistema Interno de Cadastro e Controle
+      </p>
+
+      <section
+        class="brand-benefits"
+        aria-label="Benefícios do sistema"
+      >
+        <article class="benefit-item">
+          <i class="bi bi-shield-check" aria-hidden="true"></i>
+
+          <span>Controle seguro e centralizado</span>
+        </article>
+
+        <article class="benefit-item">
+          <i class="bi bi-box-seam" aria-hidden="true"></i>
+
+          <span>Gestão completa de EPIs</span>
+        </article>
+
+        <article class="benefit-item">
+          <i class="bi bi-people" aria-hidden="true"></i>
+
+          <span>Acompanhamento de colaboradores</span>
+        </article>
+      </section>
+    </div>
+  </section>
+
+  <section
+    class="form-panel"
+    aria-labelledby="login-title"
+  >
+    <article class="login-card">
+      <header class="login-header">
+        <span class="login-kicker">Acesso ao sistema</span>
+
+        <h2 id="login-title">Entrar</h2>
+
+        <p>
+          Informe seus dados para acessar o SICC.
+        </p>
+      </header>
+
+      <form (ngSubmit)="entrar()" novalidate>
+
+        <div class="mb-3">
+          <label for="identificacao" class="form-label">
+            Matrícula ou e-mail *
+          </label>
+
+          <input
+            id="identificacao"
+            name="identificacao"
+            type="text"
+            class="form-control login-input"
+            placeholder="Digite sua matrícula ou e-mail"
+            autocomplete="username"
+            [(ngModel)]="identificacao"
+            [class.is-invalid]="tentouEnviar && !identificacaoValida()"
+          />
+
+          @if (tentouEnviar && !identificacao.trim()) {
+            <div class="invalid-feedback">
+              O campo Matrícula ou e-mail é obrigatório.
+            </div>
+          } @else if (tentouEnviar && !identificacaoValida()) {
+            <div class="invalid-feedback">
+              Digite uma matrícula ou um e-mail válido.
+            </div>
+          }
+        </div>
+
+        <div class="mb-2">
+          <label for="senha" class="form-label">
+            Senha *
+          </label>
+
+          <div class="password-field">
+            <input
+              id="senha"
+              name="senha"
+              [type]="mostrarSenha ? 'text' : 'password'"
+              class="form-control login-input"
+              placeholder="Digite sua senha"
+              autocomplete="current-password"
+              [(ngModel)]="senha"
+              [class.is-invalid]="tentouEnviar && !senha.trim()"
+            />
+
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="alternarSenha()"
+              [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'"
+            >
+              <i
+                class="bi"
+                [class.bi-eye]="!mostrarSenha"
+                [class.bi-eye-slash]="mostrarSenha"
+                aria-hidden="true"
+              ></i>
+            </button>
+          </div>
+
+          @if (tentouEnviar && !senha.trim()) {
+            <div class="invalid-feedback d-block">
+              O campo Senha é obrigatório.
+            </div>
+          }
+        </div>
+
+        <nav class="forgot-password" aria-label="Opções de acesso">
+          <a routerLink="/recuperar-senha">
+            Esqueci minha senha
+          </a>
+        </nav>
+
+        @if (mensagemErro) {
+          <div class="alert alert-danger login-alert error-alert" role="alert">
+            <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+
+            <span>{{ mensagemErro }}</span>
+          </div>
+        }
+
+        @if (mensagemSucesso) {
+          <div class="alert alert-success login-alert" role="alert">
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+
+            <span>{{ mensagemSucesso }}</span>
+          </div>
+        }
+
+        <button
+          type="submit"
+          class="btn btn-primary login-button"
+          [disabled]="carregando"
+        >
+          @if (carregando) {
+            <span
+              class="spinner-border spinner-border-sm me-2"
+              aria-hidden="true"
+            ></span>
+
+            Entrando...
+          } @else {
+            Entrar
+          }
+        </button>
+
+      </form>
+    </article>
+  </section>
+</main>

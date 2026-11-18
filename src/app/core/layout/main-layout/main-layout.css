@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+.main-area {
+  min-height: 100vh;
+  margin-left: 270px;
+  transition: margin-left 220ms ease;
+}
+
+.page-content {
+  min-height: calc(100vh - 76px);
+  padding: 28px;
+}
+
+@media (max-width: 991px) {
+  .main-area {
+    margin-left: 0;
+  }
+
+  .page-content {
+    min-height: calc(100vh - 66px);
+    padding: 19px;
+  }
+}
+
+@media (max-width: 575px) {
+  .page-content {
+    padding: 13px;
+  }
+}

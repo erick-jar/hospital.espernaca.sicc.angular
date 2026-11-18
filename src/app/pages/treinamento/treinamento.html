@@ -1,0 +1,220 @@
+<div class="container-fluid my-4">
+  
+  <!-- CABEÇALHO COM BOTÕES DE AÇÃO -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestão de Treinamentos</h2>
+    <button type="button" class="btn btn-primary new-user-button" (click)="abrirModalNovo()">
+      <i class="bi bi-plus-lg me-2"></i> Novo Treinamento
+    </button>
+  </div>
+
+  <div class="alert alert-danger" role="alert" *ngIf="erroLista">{{ erroLista }}</div>
+
+  <!-- BARRA DE FILTROS -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label class="form-label">Pesquisar Treinamentos</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" class="form-control border-start-0 ps-0" placeholder="Buscar por título, NR ou instrutor..." [(ngModel)]="termoBusca">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Filtrar por Status</label>
+          <select class="form-select" [(ngModel)]="statusFiltro">
+            <option value="TODOS">Todos os Status</option>
+            <option value="Concluído">Concluídos</option>
+            <option value="Agendado">Agendados</option>
+            <option value="Vencido">Vencidos</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABELA DE TREINAMENTOS -->
+  
+  <div class="card border-0">
+    <div class="card-body p-0">
+      <div class="table-responsive-md">
+        <table class="table table-striped align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Norma / Título</th>
+              <th>Instrutor</th>
+              <th>Data Realização</th>
+              <th>Validade</th>
+              <th>Carga Horária</th>
+              <th>Status</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of treinamentosFiltrados">
+              <td>
+                <code class="me-2" *ngIf="t.norma">{{ t.norma }}</code>
+                <strong>{{ t.titulo }}</strong>
+              </td>
+              <td>{{ t.instrutor }}</td>
+              <td>{{ t.dataRealizacao | date:'dd/MM/yyyy' }}</td>
+              <td>{{ t.dataValidade | date:'dd/MM/yyyy' }}</td>
+              <td>{{ t.cargaHoraria }}h</td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'bg-success': t.status === 'Concluído',
+                  'bg-primary': t.status === 'Agendado',
+                  'bg-danger': t.status === 'Vencido'
+                }">{{ t.status }}</span>
+              </td>
+              <td class="text-center">
+                <div class="btn-group btn-group-sm" role="group">
+                  <button class="btn btn-outline-info" (click)="verParticipantes(t)" title="Ver Participantes">
+                    <i class="bi bi-people me-1"></i> ({{ t.participantes?.length || 0 }})
+                  </button>
+                  <button class="btn btn-outline-warning" (click)="abrirModalEditar(t)" title="Editar">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-outline-danger" (click)="excluirTreinamento(t)" title="Excluir">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="treinamentosFiltrados.length === 0">
+              <td colspan="7" class="text-center text-muted py-4">Nenhum treinamento encontrado.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CADASTRO / EDIÇÃO -->
+  <div class="modal d-block bg-dark bg-opacity-50" *ngIf="exibirModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{ modoEdicao ? 'Editar Treinamento' : 'Cadastrar Novo Treinamento' }}</h4>
+          <button type="button" class="btn-close" (click)="fecharModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Título do Treinamento <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" [(ngModel)]="novoTreinamento.titulo">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Norma (Ex: NR-35)</label>
+              <input type="text" class="form-control" [(ngModel)]="novoTreinamento.norma">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Carga Horária (horas)</label>
+              <input type="number" class="form-control" [(ngModel)]="novoTreinamento.cargaHoraria">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Instrutor</label>
+            <input type="text" class="form-control" [(ngModel)]="novoTreinamento.instrutor">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Data da Realização <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" [(ngModel)]="novoTreinamento.dataRealizacao">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Status Inicial</label>
+              <select class="form-select" [(ngModel)]="novoTreinamento.status">
+                <option value="Agendado">Agendado</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Vencido">Vencido</option>
+              </select>
+            </div>
+          </div>
+
+          <hr class="my-4 text-muted">
+
+          <!-- SEÇÃO DE ADICIONAR PARTICIPANTES -->
+          <h5 class="fw-bold mb-3">Adicionar Participantes</h5>
+          <div class="row g-2 mb-3 align-items-end">
+            <div class="col-md-5">
+              <label class="form-label">Nome do participante</label>
+              <input type="text" class="form-control" placeholder="Ex: João Silva" [(ngModel)]="novoParticipante.nome">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Setor</label>
+              <input type="text" class="form-control" placeholder="Ex: Manutenção" [(ngModel)]="novoParticipante.setor">
+            </div>
+            <div class="col-md-3">
+              <button type="button" class="btn btn-primary new-user-button w-100" (click)="adicionarParticipanteModal()">
+                <i class="bi bi-plus"></i> Adicionar
+              </button>
+            </div>
+          </div>
+
+          <!-- LISTA DE PARTICIPANTES ADICIONADOS -->
+          <div class="card shadow-none border">
+            <ul class="list-group list-group-flush" style="max-height: 200px; overflow-y: auto;">
+              <li class="list-group-item d-flex justify-content-between align-items-center py-3" *ngFor="let p of novoTreinamento.participantes; let i = index">
+                <div>
+                  <strong class="d-block text-dark">{{ p.nome }}</strong>
+                  <small class="text-muted">{{ p.setor }}</small>
+                </div>
+                <button class="btn btn-sm btn-link text-danger text-decoration-none" (click)="removerParticipanteModal(i)">
+                  <i class="bi bi-x-circle me-1"></i> Remover
+                </button>
+              </li>
+              <li class="list-group-item text-muted text-center py-4" *ngIf="!novoTreinamento.participantes || novoTreinamento.participantes.length === 0">
+                <small>Nenhum participante adicionado a esta lista.</small>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-danger mx-3 mb-0" role="alert" *ngIf="mensagemErro">{{ mensagemErro }}</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="fecharModal()">Cancelar</button>
+          <button type="button" class="btn btn-primary new-user-button" [disabled]="salvando" (click)="salvarTreinamento()">
+            <i class="bi bi-check-lg me-1"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VER PARTICIPANTES -->
+  <div class="modal d-block bg-dark bg-opacity-50" *ngIf="treinamentoSelecionado" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Participantes</h4>
+          <button type="button" class="btn-close" (click)="fecharDetalhes()"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <p class="text-muted mb-4 mt-3">Treinamento: <strong>{{ treinamentoSelecionado.titulo }}</strong></p>
+          
+          <ul class="list-group list-group-flush border rounded">
+            <li class="list-group-item d-flex justify-content-between align-items-center py-3" *ngFor="let p of treinamentoSelecionado.participantes">
+              <div>
+                <strong class="d-block text-dark">{{ p.nome }}</strong>
+                <small class="text-muted">Setor: {{ p.setor }}</small>
+              </div>
+              <span class="badge" [ngClass]="p.presenca ? 'bg-success' : 'bg-warning'">
+                {{ p.presenca ? 'Presente' : 'Pendente' }}
+              </span>
+            </li>
+            <li class="list-group-item text-muted text-center py-4" *ngIf="!treinamentoSelecionado.participantes || treinamentoSelecionado.participantes.length === 0">
+              Nenhum participante inscrito ainda.
+            </li>
+          </ul>
+        </div>
+        <div class="modal-footer border-top-0">
+          <button type="button" class="btn btn-secondary" (click)="fecharDetalhes()">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

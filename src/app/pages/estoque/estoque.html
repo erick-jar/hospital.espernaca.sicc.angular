@@ -1,0 +1,463 @@
+<div class="estoque-container">
+
+  <div class="page-header">
+    <div>
+      <h1>Estoque</h1>
+      <p>Gerenciamento e controle dos equipamentos de proteção individual</p>
+    </div>
+
+    <button class="btn-primary">
+      <i class="bi bi-plus-lg"></i>
+      Adicionar EPI
+    </button>
+  </div>
+
+
+
+  @if (erroLista) {
+    <div class="mensagem mensagem-erro" role="alert">{{ erroLista }}</div>
+  }
+
+  <section class="dashboard-cards">
+
+    <article class="info-card">
+      <div class="icon blue">
+        <i class="bi bi-box-seam-fill"></i>
+      </div>
+
+      <div>
+        <span>Total de itens</span>
+        <h2>
+          {{ equipamentos.length }}
+        </h2>
+      </div>
+    </article>
+
+
+    <article class="info-card">
+      <div class="icon green">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+
+      <div>
+        <span>Disponíveis</span>
+        <h2>
+          {{ equipamentos.length }}
+        </h2>
+      </div>
+    </article>
+
+
+    <article class="info-card">
+      <div class="icon orange">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+
+      <div>
+        <span>Estoque baixo</span>
+        <h2>
+          {{ equipamentos.filter(e => e.status === 'Baixo').length }}
+        </h2>
+      </div>
+    </article>
+
+  </section>
+
+
+
+
+  <!-- ALERTAS -->
+
+  <section class="alert-box">
+
+    <h2>
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      Alertas do estoque
+    </h2>
+
+
+    <div class="alert-item">
+      ⚠ Luvas de proteção abaixo do estoque mínimo.
+    </div>
+
+
+    <div class="alert-item">
+      ⚠ Equipamentos próximos do vencimento.
+    </div>
+
+
+  </section>
+
+
+
+
+
+  <!-- LISTA DE EPIS -->
+
+  <section class="estoque-table">
+
+
+    <div class="table-header">
+
+      <h2>Lista de EPIs</h2>
+
+
+      <input 
+        type="text"
+        placeholder="Pesquisar EPI..."
+      >
+
+    </div>
+
+
+
+    <table>
+
+
+      <thead>
+
+        <tr>
+
+          <th>Equipamento</th>
+          <th>Categoria</th>
+          <th>Quantidade</th>
+          <th>Estoque mínimo</th>
+          <th>Status</th>
+          <th>Ações</th>
+
+        </tr>
+
+      </thead>
+
+
+
+      <tbody>
+
+
+        @for (equipamento of equipamentos; track equipamento.epiId) {
+
+        <tr>
+
+
+          <td>
+            {{ equipamento.nome }}
+          </td>
+
+
+          <td>
+            {{ equipamento.categoria }}
+          </td>
+
+
+          <td>
+            {{ equipamento.quantidade }}
+          </td>
+
+
+          <td>
+            {{ equipamento.minimo }}
+          </td>
+
+
+          <td>
+
+            @if (equipamento.status === 'Disponível') {
+
+              <span class="badge available">
+                Disponível
+              </span>
+
+            } @else {
+
+              <span class="badge warning">
+                Baixo
+              </span>
+
+            }
+
+          </td>
+
+
+          <td>
+
+            <button class="action-btn">
+              <i class="bi bi-pencil"></i>
+            </button>
+
+          </td>
+
+
+        </tr>
+
+        }
+
+
+      </tbody>
+
+
+    </table>
+
+
+  </section>
+
+    <!-- HISTÓRICO DE MOVIMENTAÇÃO -->
+
+  <section class="estoque-table movimentacao">
+
+
+    <div class="table-header">
+
+      <h2>Histórico de movimentações</h2>
+
+    </div>
+
+
+
+    <table>
+
+
+      <thead>
+
+        <tr>
+
+          <th>Data</th>
+          <th>Movimentação</th>
+          <th>EPI</th>
+          <th>Quantidade</th>
+          <th>Responsável</th>
+
+        </tr>
+
+      </thead>
+
+
+
+      <tbody>
+
+
+        @for (item of historico; track $index) {
+
+        <tr>
+
+
+          <td>
+            {{ item.data | date: 'dd/MM/yyyy' }}
+          </td>
+
+
+
+          <td>
+
+            @if (item.tipo === 'Entrada') {
+
+              <span class="entrada">
+                Entrada
+              </span>
+
+            } @else {
+
+              <span class="saida">
+                Saída
+              </span>
+
+            }
+
+          </td>
+
+
+
+          <td>
+            {{ item.epi }}
+          </td>
+
+
+
+          <td>
+            {{ item.quantidade }}
+          </td>
+
+
+
+          <td>
+            {{ item.responsavel }}
+          </td>
+
+
+        </tr>
+
+        }
+
+
+      </tbody>
+
+
+    </table>
+
+
+  </section>
+
+
+
+
+
+
+  <!-- FORMULÁRIO DE MOVIMENTAÇÃO -->
+
+
+  <section class="estoque-table formulario-movimentacao">
+
+
+    <div class="table-header">
+
+      <h2>Registrar movimentação</h2>
+
+    </div>
+
+
+
+    <div class="form-grid">
+
+
+
+      <div class="form-group">
+
+
+        <label>EPI</label>
+
+
+        <select [(ngModel)]="movimentacao.epiId">
+
+          <option [ngValue]="null">
+            Selecione um EPI
+          </option>
+
+          @for (equipamento of equipamentos; track equipamento.epiId) {
+            <option [ngValue]="equipamento.epiId">
+              {{ equipamento.nome }}
+            </option>
+          }
+
+        </select>
+
+
+      </div>
+
+
+
+
+
+      <div class="form-group">
+
+
+        <label>Tipo de movimentação</label>
+
+
+        <select [(ngModel)]="movimentacao.tipo">
+
+
+          <option>
+            Entrada
+          </option>
+
+
+          <option>
+            Saída
+          </option>
+
+
+        </select>
+
+
+      </div>
+
+
+
+
+
+
+      <div class="form-group">
+
+
+        <label>Quantidade</label>
+
+
+        <input
+
+          type="number"
+
+          [(ngModel)]="movimentacao.quantidade"
+
+          placeholder="Digite a quantidade"
+
+        >
+
+
+      </div>
+
+
+
+
+
+
+
+      <div class="form-group">
+
+
+        <label>Responsável</label>
+
+
+        <input
+
+          type="text"
+
+          [(ngModel)]="movimentacao.responsavel"
+
+          placeholder="Nome do responsável"
+
+        >
+
+
+      </div>
+
+
+
+
+    </div>
+
+
+
+
+
+    @if (mensagemErro) {
+      <div class="mensagem mensagem-erro" role="alert">{{ mensagemErro }}</div>
+    }
+
+    @if (mensagemSucesso) {
+      <div class="mensagem mensagem-sucesso" role="status">{{ mensagemSucesso }}</div>
+    }
+
+    <button
+
+      class="btn-primary salvar-btn"
+      [disabled]="salvando"
+
+      (click)="salvarMovimentacao()"
+
+    >
+
+      <i class="bi bi-check-lg"></i>
+
+      Salvar movimentação
+
+
+    </button>
+
+
+
+
+  </section>
+
+
+
+
+</div>
