@@ -1,12 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
 /** Endereço do back end (Spring Boot). Altere aqui se a API mudar de porta ou servidor. */
+<<<<<<< HEAD
 const isLocal = window.location.hostname === 'localhost';
 
 export const API_URL = isLocal 
   ? 'http://localhost:8080/api' 
   : 'https://hospital-esperanca-sicc-java.onrender.com/api';
 
+=======
+export const API_URL = 'https://hospital-esperanca-sicc-java.onrender.com/api';
+>>>>>>> 70f96755eda4c7c2130402c5129476ff24e0c1cb
 
 interface ErroApi {
   mensagem?: string;
